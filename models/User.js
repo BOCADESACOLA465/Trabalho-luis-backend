@@ -4,18 +4,20 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  name: { type: String, required: true },        // Nome do usuário
-  avatar: { type: String, default: "" },         // URL da foto de perfil
-  highScore: { type: Number, default: 0 },       // Recorde do jogo
+  name: { type: String, required: true },
+  avatar: { type: String, default: "" },
 
-  // 🔥 Campos para recuperação de senha
+  // highscore específico do jogo da minhoca
+  highScore: { type: Number, default: 0 },       
+
+  // highscore específico do jogo de tetraminos
+  tetrisHighScore: { type: Number, default: 0 },
+
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date }
-
 }, { timestamps: true });
 
-
-// 🔐 Criptografar senha antes de salvar
+// Criptografar senha antes de salvar
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
 
@@ -24,7 +26,6 @@ userSchema.pre('save', async function(next) {
   next();
 });
 
-// 🔍 Comparação de senha para login
 userSchema.methods.compararSenha = async function(senhaInformada) {
   return await bcrypt.compare(senhaInformada, this.password);
 };

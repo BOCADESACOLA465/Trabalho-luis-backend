@@ -37,14 +37,24 @@ router.put('/me', auth, async (req, res) => {
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
 
-    const newScore = req.body.score;
-    if (newScore > (user.highScore || 0)) {
-      user.highScore = newScore;
-      await user.save();
+    // Atualiza o highscore da minhoca
+    if (req.body.score !== undefined && req.body.score > (user.highScore || 0)) {
+      user.highScore = req.body.score;
     }
 
-    res.json({ highScore: user.highScore });
+    // Atualiza o highscore do Tetris
+    if (req.body.tetrisHighScore !== undefined && req.body.tetrisHighScore > (user.tetrisHighScore || 0)) {
+      user.tetrisHighScore = req.body.tetrisHighScore;
+    }
+
+    await user.save();
+
+    res.json({ 
+      highScore: user.highScore,
+      tetrisHighScore: user.tetrisHighScore
+    });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 });

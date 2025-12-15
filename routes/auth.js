@@ -204,6 +204,13 @@ router.put('/score', auth, async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Erro ao salvar pontuação', error: error.message });
   }
+
+
+  const rankingTetrisRoute = require('./routes/rankingTetris');
+app.use('/api/ranking', rankingTetrisRoute);
+
 });
+
+
 
 module.exports = router;
